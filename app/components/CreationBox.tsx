@@ -1,11 +1,27 @@
 import { Box, Button, Flex, Textarea } from "@mantine/core";
 import { useState } from "react";
+import { addEvent } from "~/redux/events/slice";
+import { useAppDispatch } from "~/redux/hooks";
+import { Event } from "~/types";
+import { parseDateTime } from "~/utils/parseDateTime";
+import { parseEvent } from "~/utils/parseEvent";
 
 const CreationBox = () => {
+  const dispatch = useAppDispatch();
   const [value, setValue] = useState("");
 
   const onSubmit = () => {
-    console.log(value);
+    const dateTime = parseDateTime(value);
+    const title = parseEvent(value);
+
+    const event: Event = {
+      id: Date.now().toString(),
+      title,
+      dateTime,
+    };
+
+    dispatch(addEvent(event));
+
     setValue("");
   };
 

@@ -7,6 +7,8 @@ import {
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 import { createTheme, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Provider } from "react-redux";
+import { store } from "~/redux/store";
 
 import "./tailwind.css";
 import "@mantine/core/styles.css";
@@ -39,7 +41,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <Provider store={store}>
+          <MantineProvider theme={theme}>{children}</MantineProvider>
+        </Provider>
         <ScrollRestoration />
         <Scripts />
       </body>
