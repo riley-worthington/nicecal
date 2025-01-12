@@ -3,6 +3,7 @@ import * as chrono from "chrono-node";
 
 export function parseEvent(text: string): ParsedEvent | null {
   const parsedResult = chrono.parse(text);
+  console.log(parsedResult);
 
   if (parsedResult.length > 0) {
     const dateText = parsedResult[0].text;
