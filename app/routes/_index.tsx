@@ -1,3 +1,4 @@
+import { Badge, Title } from "@mantine/core";
 import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
@@ -10,7 +11,8 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <div>
-      <h1>calendar</h1>
+      <Title>calendar</Title>
+      <Badge>beta</Badge>
     </div>
   );
 }

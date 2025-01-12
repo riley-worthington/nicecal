@@ -27,7 +27,7 @@ export function parseDateTime(text: string): ParsedDateTime {
   // Extract day
   const dayMatch = text.matchAll(DAY_REGEX);
   const days = Array.from(dayMatch, (match) => match[0].toLowerCase());
-  const day = days.length > 0 ? days.at(-1) ?? null : null;
+  const day = days.length > 0 ? (days.at(-1) ?? null) : null;
 
   return { time, day };
 }

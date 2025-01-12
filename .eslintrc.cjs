@@ -36,11 +36,11 @@ module.exports = {
         "plugin:jsx-a11y/recommended",
       ],
       settings: {
-        react: {
+        "react": {
           version: "detect",
         },
-        formComponents: ["Form"],
-        linkComponents: [
+        "formComponents": ["Form"],
+        "linkComponents": [
           { name: "Link", linkAttribute: "to" },
           { name: "NavLink", linkAttribute: "to" },
         ],
