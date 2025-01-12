@@ -1,16 +1,12 @@
-export interface Time {
-  hours: number;
-  minutes: number;
-  formatted: string;
-}
-
-export interface ParsedDateTime {
-  time: Time | null;
-  day: string | null;
+export interface ParsedEvent {
+  title: string;
+  startTime: string;
+  endTime?: string;
 }
 
 export interface Event {
   id: string;
   title: string;
-  dateTime: ParsedDateTime;
+  startTime: string;
+  endTime?: string;
 }

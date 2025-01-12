@@ -1,9 +1,8 @@
 import { Box, Button, Flex, Textarea } from "@mantine/core";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { addEvent } from "~/redux/events/slice";
 import { useAppDispatch } from "~/redux/hooks";
-import { Event } from "~/types";
-import { parseDateTime } from "~/utils/parseDateTime";
 import { parseEvent } from "~/utils/parseEvent";
 
 const CreationBox = () => {
@@ -11,16 +10,10 @@ const CreationBox = () => {
   const [value, setValue] = useState("");
 
   const onSubmit = () => {
-    const dateTime = parseDateTime(value);
-    const title = parseEvent(value);
+    const event = parseEvent(value);
+    const id = uuidv4();
 
-    const event: Event = {
-      id: Date.now().toString(),
-      title,
-      dateTime,
-    };
-
-    dispatch(addEvent(event));
+    dispatch(addEvent({ id, ...event }));
 
     setValue("");
   };
