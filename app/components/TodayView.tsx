@@ -2,6 +2,7 @@ import { Box, Text, Title } from "@mantine/core";
 import { Event } from "~/types";
 import { getEventTopPosition, getEventHeight } from "~/utils/eventPosition";
 import CurrentTimeBar from "./CurrentTimeBar";
+import { formatTimeRange } from "~/utils/formatTime";
 
 import "./TodayView.css";
 
@@ -36,7 +37,7 @@ const TodayView = ({ events }: Props) => {
                 {event.title}
               </Text>
               <Text fz="xs" className="event-time">
-                {event.startTime} - {event.endTime}
+                {formatTimeRange(event.startTime, event.endTime)}
               </Text>
             </div>
           ))}
