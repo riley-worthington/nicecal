@@ -1,8 +1,7 @@
-import { Box, Text, Title } from "@mantine/core";
+import { Box, Title } from "@mantine/core";
 import { Event } from "~/types";
-import { getEventTopPosition, getEventHeight } from "~/utils/eventPosition";
 import CurrentTimeBar from "./CurrentTimeBar";
-import { formatTimeRange } from "~/utils/formatTime";
+import EventBox from "./EventBox";
 
 import "./TodayView.css";
 
@@ -24,22 +23,8 @@ const TodayView = ({ events }: Props) => {
               {i % 12 || 12} {i < 12 ? "AM" : "PM"}
             </div>
           ))}
-          {events.map((event, index) => (
-            <div
-              key={index}
-              className="event"
-              style={{
-                top: `${getEventTopPosition(event.startTime)}%`,
-                height: `${getEventHeight(event.startTime, event.endTime)}%`,
-              }}
-            >
-              <Text fz="xs" fw={500} className="event-title">
-                {event.title}
-              </Text>
-              <Text fz="xs" className="event-time">
-                {formatTimeRange(event.startTime, event.endTime)}
-              </Text>
-            </div>
+          {events.map((event) => (
+            <EventBox key={event.id} event={event} />
           ))}
         </div>
       </div>
