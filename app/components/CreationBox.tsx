@@ -35,6 +35,7 @@ const CreationBox = () => {
       <Box className="creation-box">
         <Flex justify={"space-between"}>
           <Textarea
+            size="lg"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
             onKeyDown={handleKeyDown}
