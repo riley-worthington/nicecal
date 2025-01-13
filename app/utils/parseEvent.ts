@@ -2,7 +2,7 @@ import { ParsedEvent } from "~/types";
 import * as chrono from "chrono-node";
 
 export function parseEvent(text: string): ParsedEvent | null {
-  const parsedResult = chrono.parse(text);
+  const parsedResult = chrono.parse(text, undefined, { forwardDate: true });
   console.log(parsedResult);
 
   if (parsedResult.length > 0) {
