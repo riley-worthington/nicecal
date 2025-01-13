@@ -1,0 +1,7 @@
+.day-container {
+  border-right: 1px solid var(--mantine-color-gray-4);
+}
+
+.day-container:last-child {
+  border-right: none;
+}

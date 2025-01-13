@@ -4,12 +4,14 @@ import dayjs from "dayjs";
 export interface ViewState {
   calendarView: "day" | "week" | "month";
   currentDay: string; // ISO 8601 string (YYYY-MM-DD)
+  currentWeekStart: string | null;
 }
 
 // Define the initial state using that type
 const initialState: ViewState = {
   calendarView: "day",
   currentDay: dayjs().format("YYYY-MM-DD"),
+  currentWeekStart: null,
 };
 
 export const eventsSlice = createSlice({
@@ -22,10 +24,14 @@ export const eventsSlice = createSlice({
     setCurrentDay: (state, action) => {
       state.currentDay = action.payload;
     },
+    setCurrentWeekStart: (state, action) => {
+      state.currentWeekStart = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setCalendarView, setCurrentDay } = eventsSlice.actions;
+export const { setCalendarView, setCurrentDay, setCurrentWeekStart } =
+  eventsSlice.actions;
 
 export default eventsSlice.reducer;

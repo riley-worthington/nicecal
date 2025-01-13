@@ -9,8 +9,14 @@ import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import {
   calendarViewSelector,
   currentDaySelector,
+  currentWeekStartSelector,
 } from "~/redux/view/selectors";
-import { setCalendarView, setCurrentDay } from "~/redux/view/slice";
+import {
+  setCalendarView,
+  setCurrentDay,
+  setCurrentWeekStart,
+} from "~/redux/view/slice";
+import { getClosestMondayBefore } from "~/utils/getClosestMondayBefore";
 
 export const meta: MetaFunction = () => {
   return [
@@ -24,9 +30,16 @@ export default function Index() {
   const events = useAppSelector(eventsSelector);
   const calendarView = useAppSelector(calendarViewSelector);
   const currentDay = useAppSelector(currentDaySelector);
+  const currentWeekStart = useAppSelector(currentWeekStartSelector);
   const currentDayJS = dayjs(currentDay);
+  const currentWeekStartJS = currentWeekStart
+    ? dayjs(currentWeekStart)
+    : getClosestMondayBefore(currentDayJS);
   const today = dayjs();
   const isToday = currentDayJS.isSame(today, "day");
+  const isTodayInWeek =
+    today.isAfter(currentWeekStartJS) &&
+    today.isBefore(currentWeekStartJS.add(6, "day"));
 
   // get current day's events
   const currentDayEvents = events.filter((event) =>
@@ -48,20 +61,39 @@ export default function Index() {
     );
   };
 
+  const goForwardOneWeek = () => {
+    dispatch(
+      setCurrentWeekStart(
+        currentWeekStartJS.add(1, "week").format("YYYY-MM-DD"),
+      ),
+    );
+  };
+
+  const goBackOneWeek = () => {
+    dispatch(
+      setCurrentWeekStart(
+        currentWeekStartJS.subtract(1, "week").format("YYYY-MM-DD"),
+      ),
+    );
+  };
+
   const goToToday = () => {
     dispatch(setCurrentDay(today.format("YYYY-MM-DD")));
+    dispatch(
+      setCurrentWeekStart(getClosestMondayBefore(today).format("YYYY-MM-DD")),
+    );
   };
 
   return (
     <div>
-      <Flex align="flex-end" pl="md">
+      <Flex align="flex-end" pl="md" mb="1rem">
         <Title>present</Title>
         <Badge size="xs" mb={8} ml={8}>
           beta
         </Badge>
       </Flex>
 
-      <Box maw={600} mx="auto">
+      <Box maw={calendarView === "week" ? 1000 : 600} mx="auto">
         <Tabs variant="outline" value={calendarView} mb="lg">
           <Tabs.List>
             <Tabs.Tab
@@ -88,7 +120,8 @@ export default function Index() {
             >
               Month
             </Tabs.Tab>
-            {!isToday && (
+            {((calendarView === "day" && !isToday) ||
+              (calendarView === "week" && !isTodayInWeek)) && (
               <Button
                 ml="auto"
                 my="auto"
@@ -96,7 +129,11 @@ export default function Index() {
                 size="compact-sm"
                 onMouseDown={goToToday}
               >
-                Today
+                {calendarView === "day"
+                  ? "Today"
+                  : calendarView === "week"
+                    ? "This week"
+                    : "This month"}
               </Button>
             )}
           </Tabs.List>
@@ -109,7 +146,12 @@ export default function Index() {
             onGoForward={goForwardOneDay}
           />
         ) : calendarView === "week" ? (
-          <WeekView />
+          <WeekView
+            startDate={currentWeekStartJS}
+            events={events}
+            onGoBack={goBackOneWeek}
+            onGoForward={goForwardOneWeek}
+          />
         ) : (
           <div>Month view</div>
         )}

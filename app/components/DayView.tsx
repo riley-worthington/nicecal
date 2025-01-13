@@ -1,9 +1,8 @@
 import { ActionIcon, Box, Flex, Text, Title, Tooltip } from "@mantine/core";
 import { Event } from "~/types";
-import CurrentTimeBar from "./CurrentTimeBar";
-import EventBox from "./EventBox";
 import dayjs, { Dayjs } from "dayjs";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/16/solid";
+import SingleDayTimeline from "./SingleDayTimeline";
 
 import "./DayView.css";
 
@@ -35,9 +34,9 @@ const DayView = ({ date, events, onGoForward, onGoBack }: Props) => {
 
   return (
     <Box>
-      <Flex justify="space-between" align="center" mb="16px">
+      <Flex justify="center" gap="3rem" align="center" mb="16px">
         <Tooltip label="Previous day" fz="xs" position="bottom">
-          <ActionIcon onClick={onGoBack} variant="transparent" c="dark">
+          <ActionIcon onMouseDown={onGoBack} variant="transparent" c="dark">
             <ArrowLeftIcon />
           </ActionIcon>
         </Tooltip>
@@ -50,24 +49,12 @@ const DayView = ({ date, events, onGoForward, onGoBack }: Props) => {
           </Text>
         </div>
         <Tooltip label="Next day" fz="xs" position="bottom">
-          <ActionIcon onClick={onGoForward} variant="transparent" c="dark">
+          <ActionIcon onMouseDown={onGoForward} variant="transparent" c="dark">
             <ArrowRightIcon />
           </ActionIcon>
         </Tooltip>
       </Flex>
-      <div className="calendar-container">
-        {isToday && <CurrentTimeBar />}
-        <div className="hours">
-          {Array.from({ length: 24 }, (_, i) => (
-            <div key={i} className="hour">
-              {i % 12 || 12} {i < 12 ? "AM" : "PM"}
-            </div>
-          ))}
-          {events.map((event) => (
-            <EventBox key={event.id} event={event} />
-          ))}
-        </div>
-      </div>
+      <SingleDayTimeline date={date} events={events} />
     </Box>
   );
 };

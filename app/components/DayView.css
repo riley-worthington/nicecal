@@ -52,8 +52,7 @@
   border-radius: 3px;
   text-align: left;
   overflow: hidden;
-  width: calc(100% - 60px);
-  margin-left: 60px;
+  width: 100%;
 }
 
 .event-title {

@@ -1,12 +1,82 @@
-import { Title } from "@mantine/core";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/16/solid";
+import { Box, Flex, ActionIcon, Tooltip, Title, Text } from "@mantine/core";
+import SingleDayTimeline from "./SingleDayTimeline";
+import { Event } from "~/types";
+import dayjs, { Dayjs } from "dayjs";
+import styles from "./WeekView.module.css";
 
-const WeekView = () => {
+const formatWeek = (startDate: Dayjs, endDate: Dayjs) => {
+  const start = startDate.format("MMM D");
+  const end = endDate.format("MMM D, YYYY");
+
+  return `${start} - ${end}`;
+};
+
+type Props = {
+  startDate: Dayjs;
+  events: Event[];
+  onGoBack: () => void;
+  onGoForward: () => void;
+};
+
+const WeekView = ({ startDate, events, onGoBack, onGoForward }: Props) => {
+  const today = dayjs();
+  const endDate = startDate.add(6, "day");
+  const isTodayInWeek = today.isAfter(startDate) && today.isBefore(endDate);
+
+  // make an array of the days in the week
+  const days = Array.from({ length: 7 }, (_, i) => startDate.add(i, "day"));
+
   return (
-    <div>
-      <Title order={3} ta="center">
-        Week
-      </Title>
-    </div>
+    <Box>
+      <Flex justify="center" align="center" mb="16px" gap="3rem">
+        <Tooltip label="Previous week" fz="xs" position="bottom">
+          <ActionIcon onMouseDown={onGoBack} variant="transparent" c="dark">
+            <ArrowLeftIcon />
+          </ActionIcon>
+        </Tooltip>
+        <div>
+          <Title order={3} ta="center">
+            {isTodayInWeek ? "This Week" : "Week"}
+          </Title>
+          <Text ta="center" c="gray">
+            {formatWeek(startDate, endDate)}
+          </Text>
+        </div>
+        <Tooltip label="Next week" fz="xs" position="bottom">
+          <ActionIcon onMouseDown={onGoForward} variant="transparent" c="dark">
+            <ArrowRightIcon />
+          </ActionIcon>
+        </Tooltip>
+      </Flex>
+      <Flex>
+        {days.map((date) => (
+          <Box
+            w="100%"
+            key={date.toISOString()}
+            className={styles["day-container"]}
+          >
+            <Text
+              ta="center"
+              mb="8px"
+              size="sm"
+              c={date.isSame(today, "day") ? "blue" : "dark"}
+              fw={date.isSame(today, "day") ? "bold" : "normal"}
+            >
+              {date.format("ddd")}
+            </Text>
+            <SingleDayTimeline
+              key={date.toISOString()}
+              date={date}
+              events={events.filter((event) =>
+                date.isSame(dayjs(event.startTime), "day"),
+              )}
+              hideHourLabels={!date.isSame(startDate, "day")}
+            />
+          </Box>
+        ))}
+      </Flex>
+    </Box>
   );
 };
 
