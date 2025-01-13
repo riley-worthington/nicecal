@@ -41,7 +41,7 @@ export default function Index() {
         </Badge>
       </Flex>
 
-      <Box maw={600} p="md" mx="auto">
+      <Box maw={600} mx="auto">
         <Tabs variant="outline" value={calendarView} mb="lg">
           <Tabs.List>
             <Tabs.Tab
@@ -68,8 +68,8 @@ export default function Index() {
           <WeekView />
         )}
         <Space h={16} />
-        <CreationBox />
       </Box>
+      <CreationBox />
     </div>
   );
 }

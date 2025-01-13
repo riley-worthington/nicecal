@@ -2,6 +2,7 @@
   position: relative;
   width: 100%;
   height: 1200px;
+  margin-bottom: 200px;
 }
 
 .hours {
@@ -59,4 +60,26 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.creation-box-container {
+  /* pinned to bottom of screen */
+  background-color: white;
+  z-index: 3;
+  position: fixed;
+  bottom: 0;
+  padding-bottom: 10px;
+  width: 100vw;
+  margin: 0 auto;
+}
+
+.creation-box {
+  border: 1px solid var(--mantine-color-gray-4);
+  border-radius: 5px;
+  width: 620px;
+  margin: 0 auto;
+}
+
+.creation-box-textarea {
+  border: none;
 }
