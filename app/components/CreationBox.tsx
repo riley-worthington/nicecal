@@ -32,7 +32,7 @@ const CreationBox = () => {
         value={value}
         onChange={(event) => setValue(event.currentTarget.value)}
         onKeyDown={handleKeyDown}
-        placeholder="what's up next?"
+        placeholder="what's next?"
       />
       <Flex justify="flex-end">
         <Button onClick={onSubmit}>Add</Button>

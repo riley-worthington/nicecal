@@ -1,5 +1,6 @@
 import { Badge, Box, Flex, Space, Title } from "@mantine/core";
 import type { MetaFunction } from "@remix-run/node";
+import dayjs from "dayjs";
 import CreationBox from "~/components/CreationBox";
 import TodayView from "~/components/TodayView";
 import { eventsSelector } from "~/redux/events/selectors";
@@ -15,6 +16,11 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   const events = useAppSelector(eventsSelector);
   console.log(events);
+  // get today's events
+  const today = dayjs();
+  const todayEvents = events.filter((event) =>
+    dayjs(event.startTime).isSame(today, "day"),
+  );
 
   return (
     <div>
@@ -25,7 +31,7 @@ export default function Index() {
         </Badge>
       </Flex>
       <Box maw={600} p="md" mx="auto">
-        <TodayView events={events} />
+        <TodayView events={todayEvents} />
         <Space h={16} />
         <CreationBox />
       </Box>
