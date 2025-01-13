@@ -43,7 +43,6 @@
 
 .event {
   position: absolute;
-  width: 100%;
   background: var(--mantine-color-blue-5);
   opacity: 0.8;
   color: white;
@@ -52,6 +51,8 @@
   border-radius: 3px;
   text-align: left;
   overflow: hidden;
+  width: calc(100% - 60px);
+  margin-left: 60px;
 }
 
 .event-title {

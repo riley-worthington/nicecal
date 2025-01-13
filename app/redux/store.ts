@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import events from "./events/slice";
+import view from "./view/slice";
 
 export const store = configureStore({
   reducer: {
     events,
+    view,
   },
 });
 
