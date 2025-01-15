@@ -1,10 +1,10 @@
-import { ActionIcon, Box, Flex, Text, Title, Tooltip } from "@mantine/core";
+import { Box, Text, Title } from "@mantine/core";
 import { Event } from "~/types";
 import dayjs, { Dayjs } from "dayjs";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/16/solid";
 import SingleDayTimeline from "./SingleDayTimeline";
 
 import "./DayView.css";
+import CalendarHeader from "./CalendarHeader";
 
 type Props = {
   date: Dayjs;
@@ -34,32 +34,21 @@ const DayView = ({ date, events, onGoForward, onGoBack }: Props) => {
 
   return (
     <Box>
-      <Box w={400} mx="auto">
-        <Flex justify="space-between" gap="3rem" align="center" py="16px">
-          <Tooltip label="Previous day" fz="xs" position="bottom">
-            <ActionIcon onMouseDown={onGoBack} variant="transparent" c="dark">
-              <ArrowLeftIcon />
-            </ActionIcon>
-          </Tooltip>
-          <div>
-            <Title order={3} ta="center" c={isToday ? "yellow" : "dark"}>
-              {getDayLabel(date)}
-            </Title>
-            <Text ta="center" c="gray">
-              {date.format("dddd MMM D, YYYY")}
-            </Text>
-          </div>
-          <Tooltip label="Next day" fz="xs" position="bottom">
-            <ActionIcon
-              onMouseDown={onGoForward}
-              variant="transparent"
-              c="dark"
-            >
-              <ArrowRightIcon />
-            </ActionIcon>
-          </Tooltip>
-        </Flex>
-      </Box>
+      <CalendarHeader
+        backTooltip="Previous day"
+        forwardTooltip="Next day"
+        onGoBack={onGoBack}
+        onGoForward={onGoForward}
+      >
+        <div>
+          <Title order={3} ta="center" c={isToday ? "yellow" : "dark"}>
+            {getDayLabel(date)}
+          </Title>
+          <Text ta="center" c="gray">
+            {date.format("dddd MMM D, YYYY")}
+          </Text>
+        </div>
+      </CalendarHeader>
       <SingleDayTimeline date={date} events={events} />
     </Box>
   );

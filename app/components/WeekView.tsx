@@ -1,9 +1,9 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/16/solid";
-import { Box, Flex, ActionIcon, Tooltip, Title, Text } from "@mantine/core";
+import { Box, Flex, Title, Text } from "@mantine/core";
 import SingleDayTimeline from "./SingleDayTimeline";
 import { Event } from "~/types";
 import dayjs, { Dayjs } from "dayjs";
 import styles from "./WeekView.module.css";
+import CalendarHeader from "./CalendarHeader";
 
 const formatWeek = (startDate: Dayjs, endDate: Dayjs) => {
   const start = startDate.format("MMM D");
@@ -29,12 +29,12 @@ const WeekView = ({ startDate, events, onGoBack, onGoForward }: Props) => {
 
   return (
     <Box>
-      <Flex justify="center" align="center" py="16px" gap="3rem">
-        <Tooltip label="Previous week" fz="xs" position="bottom">
-          <ActionIcon onMouseDown={onGoBack} variant="transparent" c="dark">
-            <ArrowLeftIcon />
-          </ActionIcon>
-        </Tooltip>
+      <CalendarHeader
+        forwardTooltip="Next week"
+        backTooltip="Last week"
+        onGoForward={onGoForward}
+        onGoBack={onGoBack}
+      >
         <div>
           <Title order={3} ta="center" c={isTodayInWeek ? "yellow" : "dark"}>
             {isTodayInWeek ? "This Week" : "Week"}
@@ -43,12 +43,7 @@ const WeekView = ({ startDate, events, onGoBack, onGoForward }: Props) => {
             {formatWeek(startDate, endDate)}
           </Text>
         </div>
-        <Tooltip label="Next week" fz="xs" position="bottom">
-          <ActionIcon onMouseDown={onGoForward} variant="transparent" c="dark">
-            <ArrowRightIcon />
-          </ActionIcon>
-        </Tooltip>
-      </Flex>
+      </CalendarHeader>
       <Flex>
         {days.map((date) => (
           <Box
