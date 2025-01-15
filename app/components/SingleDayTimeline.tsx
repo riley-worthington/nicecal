@@ -1,7 +1,7 @@
+import dayjs, { Dayjs } from "dayjs";
 import { Event } from "~/types";
 import CurrentTimeBar from "./CurrentTimeBar";
 import EventBox from "./EventBox";
-import dayjs, { Dayjs } from "dayjs";
 import styles from "./SingleDayTimeline.module.css";
 
 type Props = {

@@ -1,6 +1,6 @@
 import { Text } from "@mantine/core";
 import { Event } from "~/types";
-import { getEventTopPosition, getEventHeight } from "~/utils/eventPosition";
+import { getEventHeight, getEventTopPosition } from "~/utils/eventPosition";
 import { formatTimeRange } from "~/utils/formatTime";
 
 type Props = {

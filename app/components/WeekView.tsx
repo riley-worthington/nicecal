@@ -1,9 +1,9 @@
-import { Box, Flex, Title, Text } from "@mantine/core";
-import SingleDayTimeline from "./SingleDayTimeline";
-import { Event } from "~/types";
+import { Box, Flex, Text, Title } from "@mantine/core";
 import dayjs, { Dayjs } from "dayjs";
-import styles from "./WeekView.module.css";
+import { Event } from "~/types";
 import CalendarHeader from "./CalendarHeader";
+import SingleDayTimeline from "./SingleDayTimeline";
+import styles from "./WeekView.module.css";
 
 const formatWeek = (startDate: Dayjs, endDate: Dayjs) => {
   const start = startDate.format("MMM D");

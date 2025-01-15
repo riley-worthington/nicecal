@@ -1,5 +1,5 @@
-import { ActionIcon, Box, Flex, Tooltip } from "@mantine/core";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/16/solid";
+import { ActionIcon, Box, Flex, Tooltip } from "@mantine/core";
 import { ReactNode } from "react";
 
 type Props = {

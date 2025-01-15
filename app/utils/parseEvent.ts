@@ -1,5 +1,5 @@
-import { ParsedEvent } from "~/types";
 import * as chrono from "chrono-node";
+import { ParsedEvent } from "~/types";
 
 export function parseEvent(text: string): ParsedEvent | null {
   const parsedResult = chrono.parse(text, undefined, { forwardDate: true });

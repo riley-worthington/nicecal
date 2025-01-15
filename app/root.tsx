@@ -1,3 +1,5 @@
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -5,14 +7,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Provider } from "react-redux";
 import { store } from "~/redux/store";
 import { theme } from "~/theme";
 
-import "./tailwind.css";
 import "@mantine/core/styles.css";
+import "./tailwind.css";
 
 export const meta: MetaFunction = () => {
   return [
