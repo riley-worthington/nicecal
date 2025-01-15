@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import dayjs from "dayjs";
+import { ISO_8601 } from "~/constants";
 
 export interface ViewState {
   calendarView: "day" | "week" | "month";
@@ -10,7 +11,7 @@ export interface ViewState {
 // Define the initial state using that type
 const initialState: ViewState = {
   calendarView: "day",
-  currentDay: dayjs().format("YYYY-MM-DD"),
+  currentDay: dayjs().format(ISO_8601),
   currentWeekStart: null,
 };
 

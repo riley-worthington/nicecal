@@ -13,6 +13,7 @@ import ClientOnly from "~/components/ClientOnly";
 import CreationBox from "~/components/CreationBox";
 import DayView from "~/components/DayView";
 import WeekView from "~/components/WeekView";
+import { ISO_8601 } from "~/constants";
 import { eventsSelector } from "~/redux/events/selectors";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import {
@@ -54,35 +55,31 @@ export default function Index() {
   };
 
   const goForwardOneDay = () => {
-    dispatch(setCurrentDay(currentDayJS.add(1, "day").format("YYYY-MM-DD")));
+    dispatch(setCurrentDay(currentDayJS.add(1, "day").format(ISO_8601)));
   };
 
   const goBackOneDay = () => {
-    dispatch(
-      setCurrentDay(currentDayJS.subtract(1, "day").format("YYYY-MM-DD")),
-    );
+    dispatch(setCurrentDay(currentDayJS.subtract(1, "day").format(ISO_8601)));
   };
 
   const goForwardOneWeek = () => {
     dispatch(
-      setCurrentWeekStart(
-        currentWeekStartJS.add(1, "week").format("YYYY-MM-DD"),
-      ),
+      setCurrentWeekStart(currentWeekStartJS.add(1, "week").format(ISO_8601)),
     );
   };
 
   const goBackOneWeek = () => {
     dispatch(
       setCurrentWeekStart(
-        currentWeekStartJS.subtract(1, "week").format("YYYY-MM-DD"),
+        currentWeekStartJS.subtract(1, "week").format(ISO_8601),
       ),
     );
   };
 
   const goToToday = () => {
-    dispatch(setCurrentDay(today.format("YYYY-MM-DD")));
+    dispatch(setCurrentDay(today.format(ISO_8601)));
     dispatch(
-      setCurrentWeekStart(getClosestMondayBefore(today).format("YYYY-MM-DD")),
+      setCurrentWeekStart(getClosestMondayBefore(today).format(ISO_8601)),
     );
   };
 
