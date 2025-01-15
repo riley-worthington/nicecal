@@ -1,14 +1,24 @@
+.timeline-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .calendar-container {
   position: relative;
   width: 100%;
   height: 1200px;
-  margin-bottom: 120px;
+  overflow: hidden;
 }
 
 .hours {
   position: relative;
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.hour-labels {
   height: 100%;
 }
 
@@ -19,4 +29,13 @@
   padding-left: 10px;
   font-size: 12px;
   display: flex;
+}
+
+.hour:last-of-type {
+  border-bottom: none;
+}
+
+.wrapper {
+  height: 100%;
+  border-top: 1px solid var(--mantine-color-gray-4);
 }

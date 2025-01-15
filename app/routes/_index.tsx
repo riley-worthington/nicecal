@@ -26,6 +26,7 @@ import {
   setCurrentDay,
   setCurrentWeekStart,
 } from "~/redux/view/slice";
+import styles from "~/styles/_index.module.css";
 import { getClosestMondayBefore } from "~/utils/getClosestMondayBefore";
 
 export default function Index() {
@@ -83,6 +84,16 @@ export default function Index() {
     );
   };
 
+  const showTodayButton =
+    (calendarView === "day" && !isToday) ||
+    (calendarView === "week" && !isTodayInWeek);
+
+  const todayButtonLabel = {
+    day: "Today",
+    week: "This week",
+    month: "This month",
+  }[calendarView];
+
   return (
     <ClientOnly>
       {() => (
@@ -93,7 +104,7 @@ export default function Index() {
               <Text mb={3}>a very nice calendar.</Text>
             </Flex>
           </Box>
-          <Box maw={calendarView === "week" ? 1000 : 600} mx="auto">
+          <Box maw={calendarView === "week" ? 1000 : 600} mx="auto" mb={120}>
             <Tabs variant="pills" value={calendarView} mb="lg" mx="auto">
               <Tabs.List pos="relative" justify="center">
                 <Tabs.Tab
@@ -120,32 +131,19 @@ export default function Index() {
                 >
                   Month
                 </Tabs.Tab>
-                {((calendarView === "day" && !isToday) ||
-                  (calendarView === "week" && !isTodayInWeek)) && (
+                {showTodayButton && (
                   <Button
-                    pos={"absolute"}
-                    right={2}
-                    style={{
-                      // center the button vertically
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                    }}
-                    ml="auto"
-                    my="auto"
                     variant="subtle"
                     size="compact-sm"
                     onMouseDown={goToToday}
+                    className={styles["today-button"]}
                   >
-                    {calendarView === "day"
-                      ? "Today"
-                      : calendarView === "week"
-                        ? "This week"
-                        : "This month"}
+                    {todayButtonLabel}
                   </Button>
                 )}
               </Tabs.List>
             </Tabs>
-            <Paper shadow="sm">
+            <Paper shadow="sm" className={styles.paper}>
               {calendarView === "day" ? (
                 <DayView
                   date={currentDayJS}

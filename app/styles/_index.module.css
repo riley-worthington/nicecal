@@ -1,0 +1,11 @@
+.paper {
+  /* TODO: fix overflowing events at bottom. we still want the current time indicator to overflow x */
+}
+
+.today-button {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: auto 0 auto auto;
+}
