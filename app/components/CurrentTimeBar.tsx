@@ -1,6 +1,7 @@
 import { Box, Transition } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNowOffset } from "~/hooks/useNowOffset";
+import styles from "./CurrentTimeBar.module.css";
 
 const CurrentTimeBar = () => {
   const nowOffset = useNowOffset();
@@ -12,9 +13,12 @@ const CurrentTimeBar = () => {
 
   return (
     <Transition transition="fade" duration={500} mounted={mounted}>
-      {(styles) => (
-        <Box className="time-now" style={{ ...styles, top: `${nowOffset}%` }}>
-          <div className="time-now-triangle"></div>
+      {(style) => (
+        <Box
+          className={styles["time-now"]}
+          style={{ ...style, top: `${nowOffset}%` }}
+        >
+          <div className={styles["time-now-triangle"]}></div>
         </Box>
       )}
     </Transition>

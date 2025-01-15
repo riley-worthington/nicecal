@@ -1,10 +1,8 @@
 import { Box, Text, Title } from "@mantine/core";
 import dayjs, { Dayjs } from "dayjs";
 import { Event } from "~/types";
-import SingleDayTimeline from "./SingleDayTimeline";
-
 import CalendarHeader from "./CalendarHeader";
-import "./DayView.css";
+import SingleDayTimeline from "./SingleDayTimeline";
 
 type Props = {
   date: Dayjs;

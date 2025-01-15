@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { addEvent } from "~/redux/events/slice";
 import { useAppDispatch } from "~/redux/hooks";
 import { parseEvent } from "~/utils/parseEvent";
+import styles from "./CreationBox.module.css";
 
 const CreationBox = () => {
   const dispatch = useAppDispatch();
@@ -31,8 +32,8 @@ const CreationBox = () => {
   };
 
   return (
-    <Box className="creation-box-container">
-      <Box className="creation-box">
+    <Box className={styles["creation-box-container"]}>
+      <Box className={styles["creation-box"]}>
         <Flex justify={"space-between"}>
           <Textarea
             size="lg"
@@ -40,7 +41,7 @@ const CreationBox = () => {
             onChange={(event) => setValue(event.currentTarget.value)}
             onKeyDown={handleKeyDown}
             placeholder="what's next?"
-            classNames={{ input: "creation-box-textarea" }}
+            classNames={{ input: styles["creation-box-textarea"] }}
             flex={1}
           />
           <ActionIcon onMouseDown={onSubmit} radius="xl" p="4px" m="5px">
