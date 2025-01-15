@@ -5,17 +5,21 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
-import { createTheme, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Provider } from "react-redux";
 import { store } from "~/redux/store";
+import { theme } from "~/theme";
 
 import "./tailwind.css";
 import "@mantine/core/styles.css";
 
-const theme = createTheme({
-  /** Put your mantine theme override here */
-});
+export const meta: MetaFunction = () => {
+  return [
+    { title: "nicecal" },
+    { name: "description", content: "a very nice calendar" },
+  ];
+};
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

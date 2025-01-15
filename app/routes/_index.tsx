@@ -1,6 +1,15 @@
-import { Badge, Box, Button, Flex, Space, Tabs, Title } from "@mantine/core";
-import type { MetaFunction } from "@remix-run/node";
+import {
+  Box,
+  Button,
+  Flex,
+  Paper,
+  Space,
+  Tabs,
+  Text,
+  Title,
+} from "@mantine/core";
 import dayjs from "dayjs";
+import ClientOnly from "~/components/ClientOnly";
 import CreationBox from "~/components/CreationBox";
 import DayView from "~/components/DayView";
 import WeekView from "~/components/WeekView";
@@ -17,13 +26,6 @@ import {
   setCurrentWeekStart,
 } from "~/redux/view/slice";
 import { getClosestMondayBefore } from "~/utils/getClosestMondayBefore";
-
-export const meta: MetaFunction = () => {
-  return [
-    { title: "simplecal" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
 
 export default function Index() {
   const dispatch = useAppDispatch();
@@ -85,79 +87,91 @@ export default function Index() {
   };
 
   return (
-    <div>
-      <Flex align="flex-end" pl="md" mb="1rem">
-        <Title>present</Title>
-        <Badge size="xs" mb={8} ml={8}>
-          beta
-        </Badge>
-      </Flex>
-
-      <Box maw={calendarView === "week" ? 1000 : 600} mx="auto">
-        <Tabs variant="outline" value={calendarView} mb="lg">
-          <Tabs.List>
-            <Tabs.Tab
-              value="day"
-              onMouseDown={() => {
-                handleTabChange("day");
-              }}
-            >
-              Day
-            </Tabs.Tab>
-            <Tabs.Tab
-              value="week"
-              onMouseDown={() => {
-                handleTabChange("week");
-              }}
-            >
-              Week
-            </Tabs.Tab>
-            <Tabs.Tab
-              value="month"
-              onMouseDown={() => {
-                handleTabChange("month");
-              }}
-            >
-              Month
-            </Tabs.Tab>
-            {((calendarView === "day" && !isToday) ||
-              (calendarView === "week" && !isTodayInWeek)) && (
-              <Button
-                ml="auto"
-                my="auto"
-                variant="subtle"
-                size="compact-sm"
-                onMouseDown={goToToday}
-              >
-                {calendarView === "day"
-                  ? "Today"
-                  : calendarView === "week"
-                    ? "This week"
-                    : "This month"}
-              </Button>
-            )}
-          </Tabs.List>
-        </Tabs>
-        {calendarView === "day" ? (
-          <DayView
-            date={currentDayJS}
-            events={currentDayEvents}
-            onGoBack={goBackOneDay}
-            onGoForward={goForwardOneDay}
-          />
-        ) : calendarView === "week" ? (
-          <WeekView
-            startDate={currentWeekStartJS}
-            events={events}
-            onGoBack={goBackOneWeek}
-            onGoForward={goForwardOneWeek}
-          />
-        ) : (
-          <div>Month view</div>
-        )}
-        <Space h={16} />
-      </Box>
-      <CreationBox />
-    </div>
+    <ClientOnly>
+      {() => (
+        <div>
+          <Box pl="md" mb="1rem">
+            <Flex align="flex-end" gap={8}>
+              <Title c="yellow">nicecal</Title>
+              <Text mb={3}>a very nice calendar.</Text>
+            </Flex>
+          </Box>
+          <Box maw={calendarView === "week" ? 1000 : 600} mx="auto">
+            <Tabs variant="pills" value={calendarView} mb="lg" mx="auto">
+              <Tabs.List pos="relative" justify="center">
+                <Tabs.Tab
+                  value="day"
+                  onMouseDown={() => {
+                    handleTabChange("day");
+                  }}
+                >
+                  Day
+                </Tabs.Tab>
+                <Tabs.Tab
+                  value="week"
+                  onMouseDown={() => {
+                    handleTabChange("week");
+                  }}
+                >
+                  Week
+                </Tabs.Tab>
+                <Tabs.Tab
+                  value="month"
+                  onMouseDown={() => {
+                    handleTabChange("month");
+                  }}
+                >
+                  Month
+                </Tabs.Tab>
+                {((calendarView === "day" && !isToday) ||
+                  (calendarView === "week" && !isTodayInWeek)) && (
+                  <Button
+                    pos={"absolute"}
+                    right={2}
+                    style={{
+                      // center the button vertically
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                    ml="auto"
+                    my="auto"
+                    variant="subtle"
+                    size="compact-sm"
+                    onMouseDown={goToToday}
+                  >
+                    {calendarView === "day"
+                      ? "Today"
+                      : calendarView === "week"
+                        ? "This week"
+                        : "This month"}
+                  </Button>
+                )}
+              </Tabs.List>
+            </Tabs>
+            <Paper shadow="sm">
+              {calendarView === "day" ? (
+                <DayView
+                  date={currentDayJS}
+                  events={currentDayEvents}
+                  onGoBack={goBackOneDay}
+                  onGoForward={goForwardOneDay}
+                />
+              ) : calendarView === "week" ? (
+                <WeekView
+                  startDate={currentWeekStartJS}
+                  events={events}
+                  onGoBack={goBackOneWeek}
+                  onGoForward={goForwardOneWeek}
+                />
+              ) : (
+                <div>Month view</div>
+              )}
+            </Paper>
+            <Space h={16} />
+          </Box>
+          <CreationBox />
+        </div>
+      )}
+    </ClientOnly>
   );
 }

@@ -34,26 +34,32 @@ const DayView = ({ date, events, onGoForward, onGoBack }: Props) => {
 
   return (
     <Box>
-      <Flex justify="center" gap="3rem" align="center" mb="16px">
-        <Tooltip label="Previous day" fz="xs" position="bottom">
-          <ActionIcon onMouseDown={onGoBack} variant="transparent" c="dark">
-            <ArrowLeftIcon />
-          </ActionIcon>
-        </Tooltip>
-        <div>
-          <Title order={3} ta="center" c={isToday ? "blue" : "dark"}>
-            {getDayLabel(date)}
-          </Title>
-          <Text ta="center" c="gray">
-            {date.format("dddd MMM D, YYYY")}
-          </Text>
-        </div>
-        <Tooltip label="Next day" fz="xs" position="bottom">
-          <ActionIcon onMouseDown={onGoForward} variant="transparent" c="dark">
-            <ArrowRightIcon />
-          </ActionIcon>
-        </Tooltip>
-      </Flex>
+      <Box w={400} mx="auto">
+        <Flex justify="space-between" gap="3rem" align="center" py="16px">
+          <Tooltip label="Previous day" fz="xs" position="bottom">
+            <ActionIcon onMouseDown={onGoBack} variant="transparent" c="dark">
+              <ArrowLeftIcon />
+            </ActionIcon>
+          </Tooltip>
+          <div>
+            <Title order={3} ta="center" c={isToday ? "yellow" : "dark"}>
+              {getDayLabel(date)}
+            </Title>
+            <Text ta="center" c="gray">
+              {date.format("dddd MMM D, YYYY")}
+            </Text>
+          </div>
+          <Tooltip label="Next day" fz="xs" position="bottom">
+            <ActionIcon
+              onMouseDown={onGoForward}
+              variant="transparent"
+              c="dark"
+            >
+              <ArrowRightIcon />
+            </ActionIcon>
+          </Tooltip>
+        </Flex>
+      </Box>
       <SingleDayTimeline date={date} events={events} />
     </Box>
   );

@@ -29,14 +29,14 @@ const WeekView = ({ startDate, events, onGoBack, onGoForward }: Props) => {
 
   return (
     <Box>
-      <Flex justify="center" align="center" mb="16px" gap="3rem">
+      <Flex justify="center" align="center" py="16px" gap="3rem">
         <Tooltip label="Previous week" fz="xs" position="bottom">
           <ActionIcon onMouseDown={onGoBack} variant="transparent" c="dark">
             <ArrowLeftIcon />
           </ActionIcon>
         </Tooltip>
         <div>
-          <Title order={3} ta="center">
+          <Title order={3} ta="center" c={isTodayInWeek ? "yellow" : "dark"}>
             {isTodayInWeek ? "This Week" : "Week"}
           </Title>
           <Text ta="center" c="gray">
@@ -60,7 +60,7 @@ const WeekView = ({ startDate, events, onGoBack, onGoForward }: Props) => {
               ta="center"
               mb="8px"
               size="sm"
-              c={date.isSame(today, "day") ? "blue" : "dark"}
+              c={date.isSame(today, "day") ? "yellow" : "dark"}
               fw={date.isSame(today, "day") ? "bold" : "normal"}
             >
               {date.format("ddd")}
