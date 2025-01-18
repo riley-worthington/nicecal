@@ -9,12 +9,13 @@ import {
   Title,
 } from "@mantine/core";
 import dayjs from "dayjs";
+import { useLiveQuery } from "dexie-react-hooks";
 import ClientOnly from "~/components/ClientOnly";
 import CreationBox from "~/components/CreationBox";
 import DayView from "~/components/DayView";
 import WeekView from "~/components/WeekView";
 import { ISO_8601 } from "~/constants";
-import { eventsSelector } from "~/redux/events/selectors";
+import { db } from "~/db/db";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import {
   calendarViewSelector,
@@ -31,7 +32,7 @@ import { getClosestMondayBefore } from "~/utils/getClosestMondayBefore";
 
 export default function Index() {
   const dispatch = useAppDispatch();
-  const events = useAppSelector(eventsSelector);
+  const events = useLiveQuery(() => db.events.toArray()) || [];
   const calendarView = useAppSelector(calendarViewSelector);
   const currentDay = useAppSelector(currentDaySelector);
   const currentWeekStart = useAppSelector(currentWeekStartSelector);

@@ -2,6 +2,7 @@ import { ArrowUpIcon } from "@heroicons/react/16/solid";
 import { ActionIcon, Box, Flex, Textarea } from "@mantine/core";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { addEvent as addEventDexie } from "~/db/events";
 import { addEvent } from "~/redux/events/slice";
 import { useAppDispatch } from "~/redux/hooks";
 import { parseEvent } from "~/utils/parseEvent";
@@ -17,9 +18,13 @@ const CreationBox = () => {
     }
 
     const event = parseEvent(value);
+    if (!event) {
+      return;
+    }
     const id = uuidv4();
 
     dispatch(addEvent({ id, ...event }));
+    addEventDexie(event);
 
     setValue("");
   };
