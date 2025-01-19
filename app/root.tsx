@@ -18,7 +18,15 @@ import "./tailwind.css";
 export const meta: MetaFunction = () => {
   return [
     { title: "nicecal" },
-    { name: "description", content: "a very nice calendar" },
+    { name: "description", content: "a very nice calendar." },
+    {
+      property: "og:title",
+      content: "nicecal",
+    },
+    {
+      property: "og:description",
+      content: "a very nice calendar.",
+    },
   ];
 };
 
@@ -33,6 +41,7 @@ export const links: LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
+  { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
