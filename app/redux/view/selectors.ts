@@ -7,3 +7,6 @@ export const currentDaySelector = (state: RootState) => state.view.currentDay;
 
 export const currentWeekStartSelector = (state: RootState) =>
   state.view.currentWeekStart;
+
+export const commandCenterOpenSelector = (state: RootState) =>
+  state.view.commandCenterOpen;

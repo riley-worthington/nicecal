@@ -10,6 +10,7 @@ import {
 import { Provider } from "react-redux";
 import { store } from "~/redux/store";
 import { theme } from "~/theme";
+import CommandCenter from "./components/CommandCenter";
 
 import "@mantine/core/styles.css";
 import "./tailwind.css";
@@ -46,7 +47,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Provider store={store}>
-          <MantineProvider theme={theme}>{children}</MantineProvider>
+          <MantineProvider theme={theme}>
+            <CommandCenter />
+            {children}
+          </MantineProvider>
         </Provider>
         <ScrollRestoration />
         <Scripts />

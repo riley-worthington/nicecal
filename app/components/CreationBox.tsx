@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { addEvent as addEventDexie } from "~/db/events";
 import { addEvent } from "~/redux/events/slice";
 import { useAppDispatch } from "~/redux/hooks";
+import { setCurrentDay } from "~/redux/view/slice";
 import { parseEvent } from "~/utils/parseEvent";
 import styles from "./CreationBox.module.css";
 
@@ -25,6 +26,7 @@ const CreationBox = () => {
 
     dispatch(addEvent({ id, ...event }));
     addEventDexie(event);
+    dispatch(setCurrentDay(event.startTime));
 
     setValue("");
   };
@@ -41,6 +43,8 @@ const CreationBox = () => {
       <Box className={styles["creation-box"]}>
         <Flex justify={"space-between"}>
           <Textarea
+            // eslint-disable-next-line jsx-a11y/no-autofocus
+            autoFocus
             size="lg"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
