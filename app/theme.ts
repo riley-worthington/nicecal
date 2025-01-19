@@ -30,4 +30,5 @@ export const theme = createTheme({
       "#01010a",
     ],
   },
+  activeClassName: "",
 });

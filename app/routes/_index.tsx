@@ -13,6 +13,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import ClientOnly from "~/components/ClientOnly";
 import CreationBox from "~/components/CreationBox";
 import DayView from "~/components/DayView";
+import GoToDate from "~/components/GoToDate";
 import WeekView from "~/components/WeekView";
 import { ISO_8601 } from "~/constants";
 import { db } from "~/db/db";
@@ -99,10 +100,13 @@ export default function Index() {
     <ClientOnly>
       {() => (
         <div>
-          <Box pl="md" mb="1rem">
-            <Flex align="flex-end" gap={8}>
-              <Title c="yellow">nicecal</Title>
-              <Text mb={3}>a very nice calendar.</Text>
+          <Box px="md" mb="1rem">
+            <Flex justify="space-between" align="center">
+              <Flex align="flex-end" gap={8}>
+                <Title c="yellow">nicecal</Title>
+                <Text mb={3}>a very nice calendar.</Text>
+              </Flex>
+              <GoToDate />
             </Flex>
           </Box>
           <Box maw={calendarView === "week" ? 1000 : 600} mx="auto" mb={120}>

@@ -10,6 +10,7 @@ import { commandCenterOpenSelector } from "~/redux/view/selectors";
 import {
   closeCommandCenter,
   openCommandCenter,
+  setCalendarView,
   setCurrentDay,
 } from "~/redux/view/slice";
 import { parseEvent } from "~/utils/parseEvent";
@@ -24,7 +25,13 @@ const CommandCenter = () => {
   };
 
   // hotkey ignored in input, textarea, and select
-  useHotkeys([["T", goToToday]]);
+  useHotkeys([
+    ["T", goToToday],
+    ["D", () => dispatch(setCalendarView("day"))],
+    ["W", () => dispatch(setCalendarView("week"))],
+    ["M", () => dispatch(setCalendarView("month"))],
+    ["/", () => dispatch(openCommandCenter())],
+  ]);
 
   // hotkey works inside all elements
   useHotkeys([["mod+K", () => dispatch(openCommandCenter())]], []);
