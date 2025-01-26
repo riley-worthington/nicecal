@@ -1,0 +1,27 @@
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding-bottom: 0.5rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+  height: 9rem;
+  box-sizing: border-box;
+  border-right: 1px solid var(--mantine-color-gray-4);
+  border-bottom: 1px solid var(--mantine-color-gray-4);
+}
+
+/* Remove right border for the last item in each row */
+.calendar-day:nth-child(7n) {
+  border-right: none;
+}
+
+/* Remove bottom border for the last row */
+.calendar-grid > .calendar-day:nth-last-child(-n + 7) {
+  border-bottom: none;
+}

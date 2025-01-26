@@ -14,6 +14,7 @@ import ClientOnly from "~/components/ClientOnly";
 import CreationBox from "~/components/CreationBox";
 import DayView from "~/components/DayView";
 import GoToDate from "~/components/GoToDate";
+import MonthView from "~/components/MonthView";
 import WeekView from "~/components/WeekView";
 import { ISO_8601 } from "~/constants";
 import { db } from "~/db/db";
@@ -21,11 +22,13 @@ import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import {
   calendarViewSelector,
   currentDaySelector,
+  currentMonthStartSelector,
   currentWeekStartSelector,
 } from "~/redux/view/selectors";
 import {
   setCalendarView,
   setCurrentDay,
+  setCurrentMonthStart,
   setCurrentWeekStart,
 } from "~/redux/view/slice";
 import styles from "~/styles/_index.module.css";
@@ -37,10 +40,14 @@ export default function Index() {
   const calendarView = useAppSelector(calendarViewSelector);
   const currentDay = useAppSelector(currentDaySelector);
   const currentWeekStart = useAppSelector(currentWeekStartSelector);
+  const currentMonthStart = useAppSelector(currentMonthStartSelector);
   const currentDayJS = dayjs(currentDay);
   const currentWeekStartJS = currentWeekStart
     ? dayjs(currentWeekStart)
     : getClosestMondayBefore(currentDayJS);
+  const currentMonthStartJS = currentMonthStart
+    ? dayjs(currentMonthStart)
+    : currentDayJS.startOf("month");
   const today = dayjs();
   const isToday = currentDayJS.isSame(today, "day");
   const isTodayInWeek =
@@ -79,16 +86,34 @@ export default function Index() {
     );
   };
 
+  const goForwardOneMonth = () => {
+    dispatch(
+      setCurrentMonthStart(
+        currentMonthStartJS.add(1, "month").format(ISO_8601),
+      ),
+    );
+  };
+
+  const goBackOneMonth = () => {
+    dispatch(
+      setCurrentMonthStart(
+        currentMonthStartJS.subtract(1, "month").format(ISO_8601),
+      ),
+    );
+  };
+
   const goToToday = () => {
     dispatch(setCurrentDay(today.format(ISO_8601)));
     dispatch(
       setCurrentWeekStart(getClosestMondayBefore(today).format(ISO_8601)),
     );
+    dispatch(setCurrentMonthStart(today.startOf("month").format(ISO_8601)));
   };
 
   const showTodayButton =
     (calendarView === "day" && !isToday) ||
-    (calendarView === "week" && !isTodayInWeek);
+    (calendarView === "week" && !isTodayInWeek) ||
+    (calendarView === "month" && !currentMonthStartJS.isSame(today, "month"));
 
   const todayButtonLabel = {
     day: "Today",
@@ -109,7 +134,7 @@ export default function Index() {
               <GoToDate />
             </Flex>
           </Box>
-          <Box maw={calendarView === "week" ? 1000 : 600} mx="auto" mb={120}>
+          <Box maw={calendarView === "day" ? 600 : 1000} mx="auto" mb={120}>
             <Tabs variant="pills" value={calendarView} mb="lg" mx="auto">
               <Tabs.List pos="relative" justify="center">
                 <Tabs.Tab
@@ -164,7 +189,11 @@ export default function Index() {
                   onGoForward={goForwardOneWeek}
                 />
               ) : (
-                <div>Month view</div>
+                <MonthView
+                  startDate={currentMonthStartJS}
+                  onGoBack={goBackOneMonth}
+                  onGoForward={goForwardOneMonth}
+                />
               )}
             </Paper>
             <Space h={16} />

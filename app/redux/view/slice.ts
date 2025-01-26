@@ -6,6 +6,7 @@ export interface ViewState {
   calendarView: "day" | "week" | "month";
   currentDay: string; // ISO 8601 string (YYYY-MM-DD)
   currentWeekStart: string | null;
+  currentMonthStart: string | null;
   commandCenterOpen: boolean;
 }
 
@@ -14,6 +15,7 @@ const initialState: ViewState = {
   calendarView: "day",
   currentDay: dayjs().format(ISO_8601),
   currentWeekStart: null,
+  currentMonthStart: null,
   commandCenterOpen: false,
 };
 
@@ -30,6 +32,9 @@ export const eventsSlice = createSlice({
     setCurrentWeekStart: (state, action) => {
       state.currentWeekStart = action.payload;
     },
+    setCurrentMonthStart: (state, action) => {
+      state.currentMonthStart = action.payload;
+    },
     openCommandCenter: (state) => {
       state.commandCenterOpen = true;
     },
@@ -44,6 +49,7 @@ export const {
   setCalendarView,
   setCurrentDay,
   setCurrentWeekStart,
+  setCurrentMonthStart,
   openCommandCenter,
   closeCommandCenter,
 } = eventsSlice.actions;
