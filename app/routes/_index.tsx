@@ -191,6 +191,7 @@ export default function Index() {
               ) : (
                 <MonthView
                   startDate={currentMonthStartJS}
+                  events={events}
                   onGoBack={goBackOneMonth}
                   onGoForward={goForwardOneMonth}
                 />

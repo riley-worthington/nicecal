@@ -1,5 +1,7 @@
 import { Box, Text, Title } from "@mantine/core";
 import dayjs, { Dayjs } from "dayjs";
+import { Event } from "~/types";
+import { formatTime } from "~/utils/formatTime";
 import CalendarHeader from "./CalendarHeader";
 import styles from "./MonthView.module.css";
 
@@ -7,9 +9,10 @@ type Props = {
   startDate: Dayjs;
   onGoBack: () => void;
   onGoForward: () => void;
+  events: Event[];
 };
 
-const MonthView = ({ startDate, onGoBack, onGoForward }: Props) => {
+const MonthView = ({ startDate, onGoBack, onGoForward, events }: Props) => {
   const monthName = startDate.format("MMMM");
   const year = startDate.format("YYYY");
   const today = dayjs();
@@ -66,12 +69,23 @@ const MonthView = ({ startDate, onGoBack, onGoForward }: Props) => {
           <Box key={date.toISOString()} className={styles["calendar-day"]}>
             <Text
               size="sm"
-              p={8}
+              mb={4}
               c={date.isSame(today, "day") ? "yellow" : "dark"}
               fw={date.isSame(today, "day") ? "bold" : "normal"}
             >
               {date.format("D")}
             </Text>
+            {events
+              .filter((event) => date.isSame(dayjs(event.startTime), "day"))
+              .sort((a, b) => a.startTime.localeCompare(b.startTime))
+              .map((event) => (
+                <Text key={event.id} fz="xs">
+                  <Text span fw="bold" fz="xs">
+                    {formatTime(event.startTime)}
+                  </Text>{" "}
+                  {event.title}
+                </Text>
+              ))}
           </Box>
         ))}
       </div>
