@@ -19,6 +19,7 @@ type Props = {
     changes: { title: string; startTime: string; endTime: string },
   ) => void;
   onDelete: (id: string) => void;
+  isNew?: boolean;
 };
 
 export default function EditEventModal({
@@ -27,6 +28,7 @@ export default function EditEventModal({
   onClose,
   onSave,
   onDelete,
+  isNew,
 }: Props) {
   const [title, setTitle] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -88,7 +90,7 @@ export default function EditEventModal({
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Edit Event" centered>
+    <Modal opened={opened} onClose={onClose} title={isNew ? "New Event" : "Edit Event"} centered>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -124,19 +126,21 @@ export default function EditEventModal({
           min={1}
           step={15}
         />
-        <Group justify="space-between" mt="sm">
-          <Button
-            variant="subtle"
-            color="red"
-            onClick={() => {
-              if (event) {
-                onDelete(event.id);
-                onClose();
-              }
-            }}
-          >
-            Delete
-          </Button>
+        <Group justify={isNew ? "flex-end" : "space-between"} mt="sm">
+          {!isNew && (
+            <Button
+              variant="subtle"
+              color="red"
+              onClick={() => {
+                if (event) {
+                  onDelete(event.id);
+                  onClose();
+                }
+              }}
+            >
+              Delete
+            </Button>
+          )}
           <Group>
             <Button variant="subtle" onClick={onClose}>
               Cancel
