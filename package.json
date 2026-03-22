@@ -15,6 +15,7 @@
     "@heroicons/react": "^2.2.0",
     "@mantine/core": "^7.15.3",
     "@mantine/hooks": "^7.15.3",
+    "@mantine/notifications": "^7.17.8",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "@reduxjs/toolkit": "^2.5.0",

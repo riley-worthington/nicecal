@@ -1,6 +1,7 @@
 import { ClerkApp } from "@clerk/remix";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import type { LinksFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -17,6 +18,7 @@ import { InitialSyncPrompt } from "./sync/InitialSyncPrompt";
 import { SyncProvider } from "./sync/SyncProvider";
 
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import "./global.css";
 
 export const meta: MetaFunction = () => {
@@ -63,6 +65,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <Provider store={store}>
           <MantineProvider theme={theme} defaultColorScheme="light">
+            <Notifications position="bottom-center" />
             {children}
           </MantineProvider>
         </Provider>

@@ -18,6 +18,7 @@ type Props = {
     id: string,
     changes: { title: string; startTime: string; endTime: string },
   ) => void;
+  onDelete: (id: string) => void;
 };
 
 export default function EditEventModal({
@@ -25,6 +26,7 @@ export default function EditEventModal({
   opened,
   onClose,
   onSave,
+  onDelete,
 }: Props) {
   const [title, setTitle] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -122,11 +124,25 @@ export default function EditEventModal({
           min={1}
           step={15}
         />
-        <Group justify="flex-end" mt="sm">
-          <Button variant="subtle" onClick={onClose}>
-            Cancel
+        <Group justify="space-between" mt="sm">
+          <Button
+            variant="subtle"
+            color="red"
+            onClick={() => {
+              if (event) {
+                onDelete(event.id);
+                onClose();
+              }
+            }}
+          >
+            Delete
           </Button>
-          <Button type="submit">Save</Button>
+          <Group>
+            <Button variant="subtle" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">Save</Button>
+          </Group>
         </Group>
       </Stack>
       </form>

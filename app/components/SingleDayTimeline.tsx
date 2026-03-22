@@ -1,6 +1,8 @@
+import { Button, Group } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import dayjs, { Dayjs } from "dayjs";
 import { useCallback, useRef, useState } from "react";
-import { updateEvent } from "~/db/events";
+import { deleteEvent, undeleteEvent, updateEvent } from "~/db/events";
 import { useEventDrag } from "~/hooks/useEventDrag";
 import { useSync } from "~/sync/SyncProvider";
 import { Event } from "~/types";
@@ -47,6 +49,34 @@ const SingleDayTimeline = ({ date, events, hideHourLabels }: Props) => {
     [triggerPush],
   );
 
+  const handleDelete = useCallback(
+    async (id: string) => {
+      await deleteEvent(id);
+      triggerPush();
+      const notificationId = notifications.show({
+        autoClose: 5000,
+        withCloseButton: true,
+        message: (
+          <Group gap="sm">
+            <span>Event deleted</span>
+            <Button
+              variant="subtle"
+              size="compact-xs"
+              onClick={async () => {
+                await undeleteEvent(id);
+                triggerPush();
+                notifications.hide(notificationId);
+              }}
+            >
+              Undo
+            </Button>
+          </Group>
+        ),
+      });
+    },
+    [triggerPush],
+  );
+
   return (
     <div className={styles["timeline-container"]}>
       {isToday && <CurrentTimeBar />}
@@ -81,6 +111,7 @@ const SingleDayTimeline = ({ date, events, hideHourLabels }: Props) => {
         opened={editingEvent !== null}
         onClose={() => setEditingEvent(null)}
         onSave={handleSave}
+        onDelete={handleDelete}
       />
     </div>
   );

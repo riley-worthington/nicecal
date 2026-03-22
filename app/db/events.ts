@@ -39,6 +39,15 @@ export async function deleteEvent(id: string) {
   });
 }
 
+export async function undeleteEvent(id: string) {
+  const now = new Date().toISOString();
+  await db.events.update(id, {
+    deleted: false,
+    updatedAt: now,
+    syncStatus: "pending" as const,
+  });
+}
+
 export async function getActiveEvents() {
   return db.events.filter((e) => !e.deleted).toArray();
 }
