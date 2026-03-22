@@ -1,3 +1,4 @@
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/remix";
 import {
   Box,
   Button,
@@ -10,8 +11,10 @@ import {
 } from "@mantine/core";
 import dayjs from "dayjs";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useCallback, useEffect } from "react";
 import ClientOnly from "~/components/ClientOnly";
 import CreationBox from "~/components/CreationBox";
+import DarkModeToggle from "~/components/DarkModeToggle";
 import DayView from "~/components/DayView";
 import GoToDate from "~/components/GoToDate";
 import MonthView from "~/components/MonthView";
@@ -36,7 +39,8 @@ import { getClosestMondayBefore } from "~/utils/getClosestMondayBefore";
 
 export default function Index() {
   const dispatch = useAppDispatch();
-  const events = useLiveQuery(() => db.events.toArray()) || [];
+  const events =
+    useLiveQuery(() => db.events.filter((e) => !e.deleted).toArray()) || [];
   const calendarView = useAppSelector(calendarViewSelector);
   const currentDay = useAppSelector(currentDaySelector);
   const currentWeekStart = useAppSelector(currentWeekStartSelector);
@@ -64,51 +68,76 @@ export default function Index() {
     dispatch(setCalendarView(value));
   };
 
-  const goForwardOneDay = () => {
+  const goForwardOneDay = useCallback(() => {
     dispatch(setCurrentDay(currentDayJS.add(1, "day").format(ISO_8601)));
-  };
+  }, [dispatch, currentDayJS]);
 
-  const goBackOneDay = () => {
+  const goBackOneDay = useCallback(() => {
     dispatch(setCurrentDay(currentDayJS.subtract(1, "day").format(ISO_8601)));
-  };
+  }, [dispatch, currentDayJS]);
 
-  const goForwardOneWeek = () => {
+  const goForwardOneWeek = useCallback(() => {
     dispatch(
       setCurrentWeekStart(currentWeekStartJS.add(1, "week").format(ISO_8601)),
     );
-  };
+  }, [dispatch, currentWeekStartJS]);
 
-  const goBackOneWeek = () => {
+  const goBackOneWeek = useCallback(() => {
     dispatch(
       setCurrentWeekStart(
         currentWeekStartJS.subtract(1, "week").format(ISO_8601),
       ),
     );
-  };
+  }, [dispatch, currentWeekStartJS]);
 
-  const goForwardOneMonth = () => {
+  const goForwardOneMonth = useCallback(() => {
     dispatch(
       setCurrentMonthStart(
         currentMonthStartJS.add(1, "month").format(ISO_8601),
       ),
     );
-  };
+  }, [dispatch, currentMonthStartJS]);
 
-  const goBackOneMonth = () => {
+  const goBackOneMonth = useCallback(() => {
     dispatch(
       setCurrentMonthStart(
         currentMonthStartJS.subtract(1, "month").format(ISO_8601),
       ),
     );
-  };
+  }, [dispatch, currentMonthStartJS]);
 
-  const goToToday = () => {
+  const goToToday = useCallback(() => {
     dispatch(setCurrentDay(today.format(ISO_8601)));
     dispatch(
       setCurrentWeekStart(getClosestMondayBefore(today).format(ISO_8601)),
     );
     dispatch(setCurrentMonthStart(today.startOf("month").format(ISO_8601)));
-  };
+  }, [dispatch, today]);
+
+  const goForward = useCallback(() => {
+    if (calendarView === "day") goForwardOneDay();
+    else if (calendarView === "week") goForwardOneWeek();
+    else if (calendarView === "month") goForwardOneMonth();
+  }, [calendarView, goForwardOneDay, goForwardOneWeek, goForwardOneMonth]);
+
+  const goBack = useCallback(() => {
+    if (calendarView === "day") goBackOneDay();
+    else if (calendarView === "week") goBackOneWeek();
+    else if (calendarView === "month") goBackOneMonth();
+  }, [calendarView, goBackOneDay, goBackOneWeek, goBackOneMonth]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+      if (e.key === "ArrowRight") goForward();
+      else if (e.key === "ArrowLeft") goBack();
+      else if (e.key === "t" || e.key === "T") goToToday();
+    };
+    document.addEventListener("keydown", handler, true);
+    return () => document.removeEventListener("keydown", handler, true);
+  }, [goForward, goBack, goToToday]);
 
   const showTodayButton =
     (calendarView === "day" && !isToday) ||
@@ -131,10 +160,23 @@ export default function Index() {
                 <Title c="yellow">nicecal</Title>
                 <Text mb={3}>a very nice calendar.</Text>
               </Flex>
-              <GoToDate />
+              <Flex align="center" gap="md">
+                <DarkModeToggle />
+                <GoToDate />
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton mode="redirect">
+                    <Button variant="subtle" size="compact-sm">
+                      Sign in
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+              </Flex>
             </Flex>
           </Box>
-          <Box maw={calendarView === "day" ? 600 : 1000} mx="auto" mb={120}>
+          <Box maw={calendarView === "day" ? 600 : 1000} mx="auto">
             <Tabs variant="pills" value={calendarView} mb="lg" mx="auto">
               <Tabs.List pos="relative" justify="center">
                 <Tabs.Tab

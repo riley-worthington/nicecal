@@ -1,0 +1,12 @@
+html,
+body {
+  background-color: white;
+}
+
+[data-mantine-color-scheme="dark"] body {
+  background-color: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme="dark"] {
+  color-scheme: dark;
+}
