@@ -22,7 +22,9 @@ type Props = {
 const WeekView = ({ startDate, events, onGoBack, onGoForward }: Props) => {
   const today = dayjs();
   const endDate = startDate.add(6, "day");
-  const isTodayInWeek = today.isAfter(startDate) && today.isBefore(endDate);
+  const isTodayInWeek =
+    !today.isBefore(startDate, "day") &&
+    !today.isAfter(endDate, "day");
 
   // make an array of the days in the week
   const days = Array.from({ length: 7 }, (_, i) => startDate.add(i, "day"));
@@ -58,7 +60,7 @@ const WeekView = ({ startDate, events, onGoBack, onGoForward }: Props) => {
               c={date.isSame(today, "day") ? "yellow" : "dark"}
               fw={date.isSame(today, "day") ? "bold" : "normal"}
             >
-              {date.format("ddd")}
+              {date.format("ddd D")}
             </Text>
             <SingleDayTimeline
               key={date.toISOString()}

@@ -55,8 +55,8 @@ export default function Index() {
   const today = dayjs();
   const isToday = currentDayJS.isSame(today, "day");
   const isTodayInWeek =
-    today.isAfter(currentWeekStartJS) &&
-    today.isBefore(currentWeekStartJS.add(6, "day"));
+    !today.isBefore(currentWeekStartJS, "day") &&
+    !today.isAfter(currentWeekStartJS.add(6, "day"), "day");
 
   // get current day's events
   const currentDayEvents = events.filter((event) =>
