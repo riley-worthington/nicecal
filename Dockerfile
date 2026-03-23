@@ -28,8 +28,7 @@ RUN npm ci --include=dev
 COPY . .
 
 # Generate Prisma client (output is gitignored so it must be generated in the build)
-RUN --mount=type=secret,id=DATABASE_URL \
-    DATABASE_URL="$(cat /run/secrets/DATABASE_URL)" npx prisma generate
+RUN npx prisma generate
 
 # Build application
 RUN npm run build
