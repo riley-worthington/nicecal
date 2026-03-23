@@ -1,10 +1,10 @@
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ActionIcon, Flex, Modal, Textarea } from "@mantine/core";
-import { useHotkeys } from "@mantine/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { addEvent } from "~/db/events";
-import { useAppDispatch } from "~/redux/hooks";
-import { setCurrentDay } from "~/redux/view/slice";
+import { useAppDispatch, useAppSelector } from "~/redux/hooks";
+import { creationBoxOpenSelector } from "~/redux/view/selectors";
+import { closeCreationBox, setCurrentDay } from "~/redux/view/slice";
 import { useSync } from "~/sync/SyncProvider";
 import { parseEvent } from "~/utils/parseEvent";
 
@@ -12,11 +12,14 @@ import { parseEvent } from "~/utils/parseEvent";
 const CreationBox = () => {
   const dispatch = useAppDispatch();
   const { triggerPush } = useSync();
-  const [opened, setOpened] = useState(false);
+  const opened = useAppSelector(creationBoxOpenSelector);
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useHotkeys([["C", () => setOpened(true)]]);
+  const onClose = () => {
+    dispatch(closeCreationBox());
+    setValue("");
+  };
 
   const onSubmit = useCallback(async () => {
     if (!value.trim()) return;
@@ -27,7 +30,7 @@ const CreationBox = () => {
     await addEvent(event, "pending");
     dispatch(setCurrentDay(event.startTime));
     setValue("");
-    setOpened(false);
+    dispatch(closeCreationBox());
     triggerPush();
   }, [value, dispatch, triggerPush]);
 
@@ -50,15 +53,10 @@ const CreationBox = () => {
     return () => clearTimeout(timer);
   }, [opened]);
 
-  const handleClose = () => {
-    setOpened(false);
-    setValue("");
-  };
-
   return (
     <Modal
       opened={opened}
-      onClose={handleClose}
+      onClose={onClose}
       withCloseButton={false}
       centered
       size="lg"

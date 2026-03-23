@@ -2,6 +2,8 @@ import { v4 as uuidV4 } from "uuid";
 import { ParsedEvent, SyncStatus } from "~/types";
 import { db } from "./db";
 
+const SYNC_WATERMARK_KEY = "lastSyncedAt";
+
 export async function addEvent(
   event: ParsedEvent,
   syncStatus: SyncStatus = "local",
@@ -71,10 +73,23 @@ export async function markAllEventsPending() {
 }
 
 export async function getSyncWatermark(): Promise<string | null> {
-  const row = await db.syncMeta.get("lastSyncedAt");
+  const row = await db.syncMeta.get(SYNC_WATERMARK_KEY);
   return row?.value ?? null;
 }
 
 export async function setSyncWatermark(timestamp: string) {
-  await db.syncMeta.put({ key: "lastSyncedAt", value: timestamp });
+  await db.syncMeta.put({ key: SYNC_WATERMARK_KEY, value: timestamp });
+}
+
+export async function hasBeenPrompted(userId: string): Promise<boolean> {
+  const row = await db.syncMeta.get(`prompted-${userId}`);
+  return !!row;
+}
+
+export async function markPrompted(userId: string) {
+  await db.syncMeta.put({ key: `prompted-${userId}`, value: "true" });
+}
+
+export async function countLocalEvents(): Promise<number> {
+  return db.events.where("syncStatus").equals("local").count();
 }

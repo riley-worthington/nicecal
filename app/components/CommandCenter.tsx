@@ -2,32 +2,37 @@ import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ActionIcon, Flex, Modal, TextInput } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 import { useEffect, useRef, useState } from "react";
+import { useCalendarNavigation } from "~/hooks/useCalendarNavigation";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import { commandCenterOpenSelector } from "~/redux/view/selectors";
 import {
   closeCommandCenter,
   openCommandCenter,
+  openCreationBox,
   setCalendarView,
   setCurrentDay,
 } from "~/redux/view/slice";
 import { parseEvent } from "~/utils/parseEvent";
 
-
 const CommandCenter = () => {
   const dispatch = useAppDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { goForward, goBack, goToToday } = useCalendarNavigation();
 
-  const goToToday = () => {
-    dispatch(setCurrentDay(new Date().toISOString()));
+  const goToTodayAndClose = () => {
+    goToToday();
     onClose();
   };
 
   useHotkeys([
-    ["T", goToToday],
+    ["T", goToTodayAndClose],
     ["D", () => dispatch(setCalendarView("day"))],
     ["W", () => dispatch(setCalendarView("week"))],
     ["M", () => dispatch(setCalendarView("month"))],
+    ["C", () => dispatch(openCreationBox())],
     ["/", () => dispatch(openCommandCenter())],
+    ["ArrowRight", goForward],
+    ["ArrowLeft", goBack],
   ]);
 
   useHotkeys([["mod+K", () => dispatch(openCommandCenter())]], []);
@@ -79,7 +84,9 @@ const CommandCenter = () => {
           value={query}
           onChange={(event) => setQuery(event.currentTarget.value)}
           onKeyDown={handleKeyDown}
-          styles={{ input: { border: "none", outline: "none", boxShadow: "none" } }}
+          styles={{
+            input: { backgroundColor: "var(--mantine-color-body)", border: "none", outline: "none", boxShadow: "none" },
+          }}
           flex={1}
         />
         <ActionIcon

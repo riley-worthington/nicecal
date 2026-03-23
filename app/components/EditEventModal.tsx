@@ -22,6 +22,9 @@ type Props = {
   isNew?: boolean;
 };
 
+// Arbitrary date used to construct a full datetime so dayjs can do time-of-day arithmetic on bare HH:mm strings.
+const DUMMY_DATE = "2000-01-01";
+
 export default function EditEventModal({
   event,
   opened,
@@ -52,8 +55,8 @@ export default function EditEventModal({
     changed: "start" | "end",
   ) => {
     if (!start || !end) return;
-    const s = dayjs(`2000-01-01 ${start}`);
-    const e = dayjs(`2000-01-01 ${end}`);
+    const s = dayjs(`${DUMMY_DATE} ${start}`);
+    const e = dayjs(`${DUMMY_DATE} ${end}`);
     const diff = e.diff(s, "minute");
     if (diff <= 0) {
       if (changed === "start") {
@@ -71,7 +74,7 @@ export default function EditEventModal({
     if (isNaN(mins) || mins <= 0) return;
     setDuration(mins);
     if (startTime) {
-      const s = dayjs(`2000-01-01 ${startTime}`);
+      const s = dayjs(`${DUMMY_DATE} ${startTime}`);
       setEndTime(s.add(mins, "minute").format("HH:mm"));
     }
   };

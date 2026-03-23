@@ -1,8 +1,12 @@
 import { useUser } from "@clerk/remix";
 import { Button, Flex, Modal, Text } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
-import { db } from "~/db/db";
-import { markAllEventsPending } from "~/db/events";
+import {
+  countLocalEvents,
+  hasBeenPrompted,
+  markAllEventsPending,
+  markPrompted,
+} from "~/db/events";
 import { fullSync } from "./engine";
 
 /**
@@ -19,20 +23,15 @@ export function InitialSyncPrompt() {
     if (!isSignedIn || !user) return;
 
     (async () => {
-      const prompted = await db.syncMeta.get(`prompted-${user.id}`);
-      if (prompted) return;
+      if (await hasBeenPrompted(user.id)) return;
 
-      const localEvents = await db.events
-        .where("syncStatus")
-        .equals("local")
-        .count();
+      const count = await countLocalEvents();
 
-      if (localEvents > 0) {
-        setLocalCount(localEvents);
+      if (count > 0) {
+        setLocalCount(count);
         setShowPrompt(true);
       } else {
-        await db.syncMeta.put({ key: `prompted-${user.id}`, value: "true" });
-        // Still run a full sync to pull any server-side events
+        await markPrompted(user.id);
         try {
           await fullSync();
         } catch {
@@ -48,7 +47,7 @@ export function InitialSyncPrompt() {
     try {
       await markAllEventsPending();
       await fullSync();
-      await db.syncMeta.put({ key: `prompted-${user.id}`, value: "true" });
+      await markPrompted(user.id);
     } catch (err) {
       console.error("[sync] initial upload failed:", err);
     } finally {
@@ -59,7 +58,7 @@ export function InitialSyncPrompt() {
 
   const handleSkip = useCallback(async () => {
     if (!user) return;
-    await db.syncMeta.put({ key: `prompted-${user.id}`, value: "true" });
+    await markPrompted(user.id);
     setShowPrompt(false);
     // Still pull remote events
     try {

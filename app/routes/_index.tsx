@@ -11,7 +11,6 @@ import {
 } from "@mantine/core";
 import dayjs from "dayjs";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useCallback, useEffect } from "react";
 import ClientOnly from "~/components/ClientOnly";
 import CreationBox from "~/components/CreationBox";
 import DarkModeToggle from "~/components/DarkModeToggle";
@@ -19,46 +18,44 @@ import DayView from "~/components/DayView";
 import GoToDate from "~/components/GoToDate";
 import MonthView from "~/components/MonthView";
 import WeekView from "~/components/WeekView";
-import { ISO_8601 } from "~/constants";
 import { db } from "~/db/db";
+import { useCalendarNavigation } from "~/hooks/useCalendarNavigation";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import {
   calendarViewSelector,
-  currentDaySelector,
-  currentMonthStartSelector,
-  currentWeekStartSelector,
 } from "~/redux/view/selectors";
 import {
   setCalendarView,
-  setCurrentDay,
-  setCurrentMonthStart,
-  setCurrentWeekStart,
 } from "~/redux/view/slice";
 import styles from "~/styles/_index.module.css";
-import { getClosestMondayBefore } from "~/utils/getClosestMondayBefore";
+import { isDateInRange } from "~/utils/isDateInRange";
 
 export default function Index() {
   const dispatch = useAppDispatch();
   const events =
     useLiveQuery(() => db.events.filter((e) => !e.deleted).toArray()) || [];
   const calendarView = useAppSelector(calendarViewSelector);
-  const currentDay = useAppSelector(currentDaySelector);
-  const currentWeekStart = useAppSelector(currentWeekStartSelector);
-  const currentMonthStart = useAppSelector(currentMonthStartSelector);
-  const currentDayJS = dayjs(currentDay);
-  const currentWeekStartJS = currentWeekStart
-    ? dayjs(currentWeekStart)
-    : getClosestMondayBefore(currentDayJS);
-  const currentMonthStartJS = currentMonthStart
-    ? dayjs(currentMonthStart)
-    : currentDayJS.startOf("month");
+  const {
+    currentDayJS,
+    currentWeekStartJS,
+    currentMonthStartJS,
+    goForwardOneDay,
+    goBackOneDay,
+    goForwardOneWeek,
+    goBackOneWeek,
+    goForwardOneMonth,
+    goBackOneMonth,
+    goToToday,
+  } = useCalendarNavigation();
+
   const today = dayjs();
   const isToday = currentDayJS.isSame(today, "day");
-  const isTodayInWeek =
-    !today.isBefore(currentWeekStartJS, "day") &&
-    !today.isAfter(currentWeekStartJS.add(6, "day"), "day");
+  const isTodayInWeek = isDateInRange(
+    today,
+    currentWeekStartJS,
+    currentWeekStartJS.add(6, "day"),
+  );
 
-  // get current day's events
   const currentDayEvents = events.filter((event) =>
     dayjs(event.startTime).isSame(currentDayJS, "day"),
   );
@@ -67,77 +64,6 @@ export default function Index() {
     console.log("handleTabChange");
     dispatch(setCalendarView(value));
   };
-
-  const goForwardOneDay = useCallback(() => {
-    dispatch(setCurrentDay(currentDayJS.add(1, "day").format(ISO_8601)));
-  }, [dispatch, currentDayJS]);
-
-  const goBackOneDay = useCallback(() => {
-    dispatch(setCurrentDay(currentDayJS.subtract(1, "day").format(ISO_8601)));
-  }, [dispatch, currentDayJS]);
-
-  const goForwardOneWeek = useCallback(() => {
-    dispatch(
-      setCurrentWeekStart(currentWeekStartJS.add(1, "week").format(ISO_8601)),
-    );
-  }, [dispatch, currentWeekStartJS]);
-
-  const goBackOneWeek = useCallback(() => {
-    dispatch(
-      setCurrentWeekStart(
-        currentWeekStartJS.subtract(1, "week").format(ISO_8601),
-      ),
-    );
-  }, [dispatch, currentWeekStartJS]);
-
-  const goForwardOneMonth = useCallback(() => {
-    dispatch(
-      setCurrentMonthStart(
-        currentMonthStartJS.add(1, "month").format(ISO_8601),
-      ),
-    );
-  }, [dispatch, currentMonthStartJS]);
-
-  const goBackOneMonth = useCallback(() => {
-    dispatch(
-      setCurrentMonthStart(
-        currentMonthStartJS.subtract(1, "month").format(ISO_8601),
-      ),
-    );
-  }, [dispatch, currentMonthStartJS]);
-
-  const goToToday = useCallback(() => {
-    dispatch(setCurrentDay(today.format(ISO_8601)));
-    dispatch(
-      setCurrentWeekStart(getClosestMondayBefore(today).format(ISO_8601)),
-    );
-    dispatch(setCurrentMonthStart(today.startOf("month").format(ISO_8601)));
-  }, [dispatch, today]);
-
-  const goForward = useCallback(() => {
-    if (calendarView === "day") goForwardOneDay();
-    else if (calendarView === "week") goForwardOneWeek();
-    else if (calendarView === "month") goForwardOneMonth();
-  }, [calendarView, goForwardOneDay, goForwardOneWeek, goForwardOneMonth]);
-
-  const goBack = useCallback(() => {
-    if (calendarView === "day") goBackOneDay();
-    else if (calendarView === "week") goBackOneWeek();
-    else if (calendarView === "month") goBackOneMonth();
-  }, [calendarView, goBackOneDay, goBackOneWeek, goBackOneMonth]);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-
-      if (e.key === "ArrowRight") goForward();
-      else if (e.key === "ArrowLeft") goBack();
-      else if (e.key === "t" || e.key === "T") goToToday();
-    };
-    document.addEventListener("keydown", handler, true);
-    return () => document.removeEventListener("keydown", handler, true);
-  }, [goForward, goBack, goToToday]);
 
   const showTodayButton =
     (calendarView === "day" && !isToday) ||
