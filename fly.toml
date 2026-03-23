@@ -1,18 +1,15 @@
-# fly.toml app configuration file generated for nicecal on 2025-01-19T01:35:14Z
+# fly.toml app configuration file generated for nicecal on 2026-03-23T02:14:27Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'nicecal'
-primary_region = 'sea'
+primary_region = 'sjc'
 
 [build]
 
-[deploy]
-  release_command = "npx prisma migrate deploy"
-
 [http_service]
-  internal_port = 3000
+  internal_port = 8080
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
