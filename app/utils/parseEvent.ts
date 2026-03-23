@@ -3,7 +3,6 @@ import { ParsedEvent } from "~/types";
 
 export function parseEvent(text: string): ParsedEvent | null {
   const parsedResult = chrono.parse(text, undefined, { forwardDate: true });
-  console.log(parsedResult);
 
   if (parsedResult.length > 0) {
     const dateText = parsedResult[0].text;

@@ -1,64 +1,95 @@
-import { ArrowUpIcon } from "@heroicons/react/16/solid";
-import { ActionIcon, Box, Flex, Textarea } from "@mantine/core";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { addEvent as addEventDexie } from "~/db/events";
-import { addEvent } from "~/redux/events/slice";
-import { useAppDispatch } from "~/redux/hooks";
-import { setCurrentDay } from "~/redux/view/slice";
+import { ArrowRightIcon } from "@heroicons/react/16/solid";
+import { ActionIcon, Flex, Modal, Textarea } from "@mantine/core";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { addEvent } from "~/db/events";
+import { useAppDispatch, useAppSelector } from "~/redux/hooks";
+import { creationBoxOpenSelector } from "~/redux/view/selectors";
+import { closeCreationBox, setCurrentDay } from "~/redux/view/slice";
+import { useSync } from "~/sync/SyncProvider";
 import { parseEvent } from "~/utils/parseEvent";
-import styles from "./CreationBox.module.css";
+
 
 const CreationBox = () => {
   const dispatch = useAppDispatch();
+  const { triggerPush } = useSync();
+  const opened = useAppSelector(creationBoxOpenSelector);
   const [value, setValue] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const onSubmit = () => {
-    if (!value.trim()) {
-      return;
-    }
-
-    const event = parseEvent(value);
-    if (!event) {
-      return;
-    }
-    const id = uuidv4();
-
-    dispatch(addEvent({ id, ...event }));
-    addEventDexie(event);
-    dispatch(setCurrentDay(event.startTime));
-
+  const onClose = () => {
+    dispatch(closeCreationBox());
     setValue("");
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
+  const onSubmit = useCallback(async () => {
+    if (!value.trim()) return;
+
+    const event = parseEvent(value);
+    if (!event) return;
+
+    await addEvent(event, "pending");
+    dispatch(setCurrentDay(event.startTime));
+    setValue("");
+    dispatch(closeCreationBox());
+    triggerPush();
+  }, [value, dispatch, triggerPush]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
       onSubmit();
     }
   };
 
+  useEffect(() => {
+    if (!opened) return;
+    const timer = setTimeout(() => {
+      const ta = textareaRef.current;
+      if (ta) {
+        ta.focus();
+        ta.setSelectionRange(ta.value.length, ta.value.length);
+      }
+    }, 16);
+    return () => clearTimeout(timer);
+  }, [opened]);
+
   return (
-    <Box className={styles["creation-box-container"]}>
-      <Box className={styles["creation-box"]}>
-        <Flex justify={"space-between"}>
-          <Textarea
-            // eslint-disable-next-line jsx-a11y/no-autofocus
-            autoFocus
-            size="lg"
-            value={value}
-            onChange={(event) => setValue(event.currentTarget.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="what's next?"
-            classNames={{ input: styles["creation-box-textarea"] }}
-            flex={1}
-          />
-          <ActionIcon onMouseDown={onSubmit} radius="xl" p="4px" m="5px">
-            <ArrowUpIcon style={{}} />
-          </ActionIcon>
-        </Flex>
-      </Box>
-    </Box>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      withCloseButton={false}
+      centered
+      size="lg"
+      styles={{ body: { padding: 0 } }}
+      overlayProps={{ backgroundOpacity: 0.35, blur: 3 }}
+    >
+      <Flex align="center" gap="xs">
+        <Textarea
+          ref={textareaRef}
+          size="lg"
+          value={value}
+          onChange={(e) => setValue(e.currentTarget.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="what's next?"
+          styles={{
+            input: { backgroundColor: "var(--mantine-color-body)", border: "none", outline: "none", boxShadow: "none" },
+          }}
+          flex={1}
+          autosize
+          minRows={1}
+          maxRows={4}
+        />
+        <ActionIcon
+          onMouseDown={onSubmit}
+          radius="xl"
+          size="lg"
+          variant="filled"
+          mr="xs"
+        >
+          <ArrowRightIcon width={18} />
+        </ActionIcon>
+      </Flex>
+    </Modal>
   );
 };
 

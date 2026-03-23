@@ -1,5 +1,8 @@
+import { ClerkApp } from "@clerk/remix";
+import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import { Notifications } from "@mantine/notifications";
+import type { LinksFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -11,9 +14,12 @@ import { Provider } from "react-redux";
 import { store } from "~/redux/store";
 import { theme } from "~/theme";
 import CommandCenter from "./components/CommandCenter";
+import { InitialSyncPrompt } from "./sync/InitialSyncPrompt";
+import { SyncProvider } from "./sync/SyncProvider";
 
 import "@mantine/core/styles.css";
-import "./tailwind.css";
+import "@mantine/notifications/styles.css";
+import "./global.css";
 
 export const meta: MetaFunction = () => {
   return [
@@ -44,6 +50,8 @@ export const links: LinksFunction = () => [
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
 ];
 
+export const loader: LoaderFunction = (args) => rootAuthLoader(args);
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -52,12 +60,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <ColorSchemeScript />
+        <ColorSchemeScript defaultColorScheme="light" />
       </head>
       <body>
         <Provider store={store}>
-          <MantineProvider theme={theme}>
-            <CommandCenter />
+          <MantineProvider theme={theme} defaultColorScheme="light">
+            <Notifications position="bottom-center" />
             {children}
           </MantineProvider>
         </Provider>
@@ -68,6 +76,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+// SyncProvider, CommandCenter, and InitialSyncPrompt must live here — inside
+// ClerkApp — because they use useUser(), which requires the Clerk context.
+// Layout is rendered outside ClerkApp and cannot use Clerk hooks.
+function App() {
+  return (
+    <SyncProvider>
+      <CommandCenter />
+      <InitialSyncPrompt />
+      <Outlet />
+    </SyncProvider>
+  );
 }
+
+export default ClerkApp(App);

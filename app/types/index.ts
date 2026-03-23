@@ -1,3 +1,5 @@
+export type SyncStatus = "local" | "pending" | "synced";
+
 export interface ParsedEvent {
   title: string;
   startTime: string;
@@ -9,4 +11,7 @@ export interface Event {
   title: string;
   startTime: string;
   endTime?: string;
+  updatedAt: string;
+  deleted: boolean;
+  syncStatus: SyncStatus;
 }

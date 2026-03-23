@@ -1,39 +1,40 @@
-import {
-  ArrowTurnDownLeftIcon,
-  CalendarDaysIcon,
-} from "@heroicons/react/16/solid";
-import { Modal, TextInput, useMantineTheme } from "@mantine/core";
+import { ArrowRightIcon } from "@heroicons/react/16/solid";
+import { ActionIcon, Flex, Modal, TextInput } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useCalendarNavigation } from "~/hooks/useCalendarNavigation";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import { commandCenterOpenSelector } from "~/redux/view/selectors";
 import {
   closeCommandCenter,
   openCommandCenter,
+  openCreationBox,
   setCalendarView,
   setCurrentDay,
 } from "~/redux/view/slice";
 import { parseEvent } from "~/utils/parseEvent";
 
 const CommandCenter = () => {
-  const theme = useMantineTheme();
   const dispatch = useAppDispatch();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { goForward, goBack, goToToday } = useCalendarNavigation();
 
-  const goToToday = () => {
-    dispatch(setCurrentDay(new Date().toISOString()));
+  const goToTodayAndClose = () => {
+    goToToday();
     onClose();
   };
 
-  // hotkey ignored in input, textarea, and select
   useHotkeys([
-    ["T", goToToday],
+    ["T", goToTodayAndClose],
     ["D", () => dispatch(setCalendarView("day"))],
     ["W", () => dispatch(setCalendarView("week"))],
     ["M", () => dispatch(setCalendarView("month"))],
+    ["C", () => dispatch(openCreationBox())],
     ["/", () => dispatch(openCommandCenter())],
+    ["ArrowRight", goForward],
+    ["ArrowLeft", goBack],
   ]);
 
-  // hotkey works inside all elements
   useHotkeys([["mod+K", () => dispatch(openCommandCenter())]], []);
 
   const opened = useAppSelector(commandCenterOpenSelector);
@@ -44,14 +45,16 @@ const CommandCenter = () => {
 
   const [query, setQuery] = useState("");
 
+  useEffect(() => {
+    if (!opened) return;
+    const timer = setTimeout(() => inputRef.current?.focus(), 16);
+    return () => clearTimeout(timer);
+  }, [opened]);
+
   const onSubmit = () => {
-    if (!query.trim()) {
-      return;
-    }
+    if (!query.trim()) return;
     const event = parseEvent(query);
-    if (!event) {
-      return;
-    }
+    if (!event) return;
     dispatch(setCurrentDay(event.startTime));
     onClose();
   };
@@ -68,22 +71,34 @@ const CommandCenter = () => {
       opened={opened}
       onClose={onClose}
       withCloseButton={false}
-      padding={0}
-      overlayProps={{ blur: 4 }}
+      centered
+      size="lg"
+      styles={{ body: { padding: 0 } }}
+      overlayProps={{ backgroundOpacity: 0.35, blur: 3 }}
     >
-      <TextInput
-        size="lg"
-        placeholder="Go to date"
-        leftSection={
-          <CalendarDaysIcon width="1.7rem" color={theme.colors.gray[6]} />
-        }
-        rightSection={
-          <ArrowTurnDownLeftIcon width="1.5rem" color={theme.colors.gray[4]} />
-        }
-        value={query}
-        onChange={(event) => setQuery(event.currentTarget.value)}
-        onKeyDown={handleKeyDown}
-      />
+      <Flex align="center" gap="xs">
+        <TextInput
+          ref={inputRef}
+          size="lg"
+          placeholder="Go to date…"
+          value={query}
+          onChange={(event) => setQuery(event.currentTarget.value)}
+          onKeyDown={handleKeyDown}
+          styles={{
+            input: { backgroundColor: "var(--mantine-color-body)", border: "none", outline: "none", boxShadow: "none" },
+          }}
+          flex={1}
+        />
+        <ActionIcon
+          onMouseDown={onSubmit}
+          radius="xl"
+          size="lg"
+          variant="filled"
+          mr="xs"
+        >
+          <ArrowRightIcon width={18} />
+        </ActionIcon>
+      </Flex>
     </Modal>
   );
 };

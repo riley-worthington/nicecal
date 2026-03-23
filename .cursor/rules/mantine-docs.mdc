@@ -1,0 +1,20 @@
+---
+description: Reference Mantine documentation when implementing UI component changes
+globs: app/components/**/*.tsx, app/routes/**/*.tsx, app/sync/**/*.tsx
+alwaysApply: false
+---
+
+# Mantine Component Documentation
+
+When implementing or modifying a component and the correct Mantine API usage isn't obvious, look up the relevant Mantine docs before writing code.
+
+Docs follow this URL pattern: `https://mantine.dev/core/{component-name}/`
+
+Examples:
+- TextInput → https://mantine.dev/core/text-input/
+- Modal → https://mantine.dev/core/modal/
+- Button → https://mantine.dev/core/button/
+- Select → https://mantine.dev/core/select/
+- Stack → https://mantine.dev/core/stack/
+
+Use the `WebFetch` tool to pull the docs page when you need to verify props, Styles API selectors, or usage patterns you're unsure about.

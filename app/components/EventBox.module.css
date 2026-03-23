@@ -9,10 +9,55 @@
   text-align: left;
   overflow: hidden;
   width: 100%;
+  cursor: grab;
+  transition: box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.event.dragging {
+  cursor: grabbing;
+  opacity: 0.95;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.event-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.compact .event-content {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 6px;
 }
 
 .event-title {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.event-time {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.resize-handle-top,
+.resize-handle-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+}
+
+.resize-handle-top {
+  top: 0;
+}
+
+.resize-handle-bottom {
+  bottom: 0;
 }

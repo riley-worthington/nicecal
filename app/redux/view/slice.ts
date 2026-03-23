@@ -8,15 +8,16 @@ export interface ViewState {
   currentWeekStart: string | null;
   currentMonthStart: string | null;
   commandCenterOpen: boolean;
+  creationBoxOpen: boolean;
 }
 
-// Define the initial state using that type
 const initialState: ViewState = {
   calendarView: "day",
   currentDay: dayjs().format(ISO_8601),
   currentWeekStart: null,
   currentMonthStart: null,
   commandCenterOpen: false,
+  creationBoxOpen: false,
 };
 
 export const eventsSlice = createSlice({
@@ -41,6 +42,12 @@ export const eventsSlice = createSlice({
     closeCommandCenter: (state) => {
       state.commandCenterOpen = false;
     },
+    openCreationBox: (state) => {
+      state.creationBoxOpen = true;
+    },
+    closeCreationBox: (state) => {
+      state.creationBoxOpen = false;
+    },
   },
 });
 
@@ -52,6 +59,8 @@ export const {
   setCurrentMonthStart,
   openCommandCenter,
   closeCommandCenter,
+  openCreationBox,
+  closeCreationBox,
 } = eventsSlice.actions;
 
 export default eventsSlice.reducer;

@@ -13,3 +13,6 @@ export const currentMonthStartSelector = (state: RootState) =>
 
 export const commandCenterOpenSelector = (state: RootState) =>
   state.view.commandCenterOpen;
+
+export const creationBoxOpenSelector = (state: RootState) =>
+  state.view.creationBoxOpen;
